@@ -4,12 +4,11 @@ import co.istad.mvcap.dto.CreateProductDto;
 import co.istad.mvcap.dto.ProductDto;
 import co.istad.mvcap.dto.UpdateProductDto;
 import co.istad.mvcap.mapper.CreateProductDtoMapper;
+import co.istad.mvcap.mapper.ProductDtoToMap;
 import co.istad.mvcap.mapper.UpdateProductDtoMapper;
 import co.istad.mvcap.model.Product;
-
 import java.util.*;
 import java.util.UUID;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class ProductDaoImp implements ProductDao{
@@ -37,11 +36,30 @@ public class ProductDaoImp implements ProductDao{
     }
     @Override
     public void removeById(UUID uuidRemove) {
+//        method 1
         staticDataSource.setProductList(
                 staticDataSource.getProductList().
                 stream().
-                filter(product -> !product.getId().equals(uuidRemove)).
-                        collect(Collectors.toList()));
+                        filter(product -> !product.getId().equals(uuidRemove)).
+                        collect(Collectors.toList())
+        );
+        /*        method 2
+        boolean isFound = staticDataSource.getProductList().stream()
+                .filter(product -> product.getId().equals(uuidRemove))
+                .findFirst()
+                .map(product -> {
+                    staticDataSource.getProductList().remove(product);
+                    System.out.println("already remove");
+                    return true;
+                })
+                .orElse(false);
+        ProductController controller = new ProductController();
+        System.out.println(staticDataSource.getProductList());
+        if (!isFound) {
+
+        }
+
+        */
     }
     @Override
     public void updateProductById(UUID uuidUpdate, UpdateProductDto updateProduct) {
@@ -58,5 +76,18 @@ public class ProductDaoImp implements ProductDao{
         ).collect(Collectors.toList());
     }
 
-
+    @Override
+    public boolean searchById(UUID uuid) {
+        return staticDataSource.getProductList().stream().anyMatch(
+                product -> product.getId().equals(uuid)
+        );
+    }
+    @Override
+    public List<ProductDto> searchByName(String name) {
+       return staticDataSource.getProductList().stream().
+        filter(product -> product.getName().
+                equalsIgnoreCase(name)).
+               map(productDtoMapper::apply).
+               collect(Collectors.toList());
+    }
 }

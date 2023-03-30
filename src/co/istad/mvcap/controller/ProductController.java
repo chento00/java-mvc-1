@@ -24,5 +24,10 @@ public class ProductController  {
     public void handleUpdateById(UUID uuid, UpdateProductDto updateProductDto){
         productDaoImp.updateProductById(uuid,updateProductDto);
     }
-
+    public boolean searchById(UUID uuid){
+        return productDaoImp.searchById(uuid);
+    }
+    public List<ProductDto> handleSearchByName(String name){
+        return productDaoImp.searchByName(name);
+    }
 }

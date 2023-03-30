@@ -12,5 +12,7 @@ public interface ProductDao {
      ProductDto insert(CreateProductDto createProductDto);
      void removeById(UUID uuidRemove);
      void updateProductById(UUID uuidUpdate, UpdateProductDto updateProduct);
+     boolean searchById(UUID uuid);
+     List<ProductDto> searchByName(String name);
 }
 
